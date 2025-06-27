@@ -1,19 +1,22 @@
 import postModel from '../model/post.model.js';
-import jwt from 'jsonwebtoken';
+import userModel from '../model/user.model.js';
 
 export const createPost = async (req, res) => {
  const body = req.body;
- const { token } = req.cookies;
+ const { id } = req.user;
 
  try {
-  const payload = jwt.verify(token, process.env.JWT_SECRET);
-  console.log(payload);
-
   const newPost = new postModel({
-   creator: '6853a415b9dc0b9ba7e6a2fd',
+   creator: id,
    ...body,
   });
   const savedPost = await newPost.save();
+
+  await userModel.findByIdAndUpdate(
+   id,
+   { $push: { posts: savedPost.id } },
+   { new: true }
+  );
 
   return res.status(201).json({
    message: 'Post successfully created',
@@ -24,37 +27,6 @@ export const createPost = async (req, res) => {
   return res.send(error.message);
  }
 };
-
-// export const deletePost = async (req, res) => {
-//  const { postId } = req.params;
-//  const { userId } = req.body;
-
-//  try {
-//   const post = await postModel.findById(postId);
-//   if (!post) {
-//    return res.status(404).json({
-//     message: 'Post unavailable',
-//    });
-//   }
-
-//   if (userId != post.creator) {
-//    return res.status(403).json({
-//     message: 'Post does not belong to you',
-//    });
-//   }
-
-//   const deletePost = await postModel.findByIdAndDelete(postId);
-//   return res.status(200).json({
-//    message: 'Post deleted Successfully',
-//    data: deletePost,
-//   });
-//  } catch (error) {
-//   return res.status(500).json({
-//    message: 'Error deleting post',
-//    error: error.message,
-//   });
-//  }
-// };
 
 export const deletePost = async (req, res) => {
  const { postId } = req.params;
@@ -138,10 +110,10 @@ export const getUserPosts = async (req, res) => {
 };
 
 export const getSinglePost = async (req, res) => {
- const postId = req.params;
+ const { postId } = req.params;
 
  try {
-  const post = await postModel.find(postId);
+  const post = await postModel.findById(postId).populate('creator');
   return res.status(200).json({
    message: 'Post found',
    data: post,

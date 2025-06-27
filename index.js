@@ -5,6 +5,7 @@ import userRoute from './route/user.route.js';
 import postRoute from './route/post.route.js';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import kycRoute from './route/kyc.route.js';
 env.config();
 app.use(express.json());
 app.use(cookieParser());
@@ -22,6 +23,7 @@ const port = 7000;
 
 app.use(userRoute);
 app.use(postRoute);
+app.use(kycRoute);
 app.listen(port, () => {
  console.log(`Server is running on port ${port}`);
 });

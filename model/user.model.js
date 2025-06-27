@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema(
    required: true,
    unique: true,
   },
+  isAdmin: {
+   type: Boolean,
+   default: false,
+  },
   password: {
    type: String,
    required: true,
@@ -17,6 +21,11 @@ const userSchema = new mongoose.Schema(
   hobbies: {
    type: [String],
   },
+  kyc: {
+   type: mongoose.Types.ObjectId,
+   ref: 'kyc',
+  },
+  posts: [{ type: mongoose.Types.ObjectId, ref: 'post' }],
  },
  { timestamps: true }
 );

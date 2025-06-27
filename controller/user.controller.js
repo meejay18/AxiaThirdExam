@@ -136,3 +136,20 @@ export const deleteUser = async (req, res) => {
   });
  }
 };
+
+export const getOneUser = async (req, res) => {
+ const { id } = req.user;
+
+ try {
+  const user = await userModel.findById(id).populate('posts').populate('kyc');
+  return res.status(200).json({
+   message: 'User retrieved successfully',
+   data: user,
+  });
+ } catch (error) {
+  return res.status(500).json({
+   message: 'User gotten successfully',
+   error: error.message,
+  });
+ }
+};
