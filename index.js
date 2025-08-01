@@ -17,6 +17,8 @@ app.use(
 )
 app.use(cookieParser())
 
+const port = process.env.PORT || 7000
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
@@ -25,8 +27,6 @@ mongoose
   .catch(() => {
     console.log('error connecting with database')
   })
-
-const port = 7000
 
 app.use(userRoute)
 app.use(postRoute)
